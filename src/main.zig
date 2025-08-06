@@ -1,26 +1,54 @@
 const std = @import("std");
-const paseto_zig = @import("paseto_zig");
+const paseto = @import("paseto");
+
+const User = struct {
+    email: []const u8,
+    session: []const u8 = "",
+    lvl: []const u8,
+    exp: i64 = 0,
+    iat: i64 = 0,
+
+    pub fn format(self: User, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
+        _ = fmt;
+        _ = options;
+        try writer.print(
+            \\  email: {s}
+            \\  session: {s}
+            \\  level: {s}
+            \\  exp: {}
+            \\  iat: {}
+        , .{ self.email, self.session, self.lvl, self.exp, self.iat });
+    }
+};
 
 pub fn main() !void {
-    // Prints to stderr, ignoring potential errors.
-    std.debug.print("All your {s} are belong to us.\n", .{"codebase"});
-    try paseto_zig.bufferedPrint();
-}
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
 
-test "simple test" {
-    var list = std.ArrayList(i32).init(std.testing.allocator);
-    defer list.deinit(); // Try commenting this out and see if zig detects the memory leak!
-    try list.append(42);
-    try std.testing.expectEqual(@as(i32, 42), list.pop());
-}
+    var arena = std.heap.ArenaAllocator.init(gpa.allocator());
+    defer arena.deinit();
+    const allocator = arena.allocator();
 
-test "fuzz example" {
-    const Context = struct {
-        fn testOne(context: @This(), input: []const u8) anyerror!void {
-            _ = context;
-            // Try passing `--fuzz` to `zig build test` and see if it manages to fail this test case!
-            try std.testing.expect(!std.mem.eql(u8, "canyoufindme", input));
-        }
-    };
-    try std.testing.fuzz(Context{}, Context.testOne, .{});
+    // Set us up the bomb
+    const secret = "this is my secret key that is 32";
+
+    // encode us a token
+    const token = try paseto.encode(
+        allocator,
+        User{
+            .email = "jake@email.com",
+            .session = "60399da8-29e3-4eae-b8b6-4c0b6c682f31",
+            .lvl = "conscript",
+            .exp = std.time.timestamp() + 86400,
+            .iat = std.time.timestamp(),
+        },
+        secret,
+    );
+    defer allocator.free(token);
+    std.debug.print("Encoded : {s}\n", .{token});
+
+    // decode us the token
+    const user: User = try paseto.decode(allocator, token, secret, User);
+
+    std.debug.print("Decoded User: {s}\n", .{user});
 }
