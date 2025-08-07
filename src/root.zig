@@ -17,7 +17,7 @@ const PasetoError = error{
 pub fn encode(
     arena: Allocator,
     payload: anytype,
-    secret_key: *const [32]u8,
+    secret_key: []const u8,
 ) ![]u8 {
     // Validate secret key size
     if (secret_key.len != 32) {
@@ -77,7 +77,7 @@ pub fn encode(
 pub fn decode(
     arena: Allocator,
     token: []const u8,
-    secret_key: *const [32]u8,
+    secret_key: []const u8,
     comptime T: type,
 ) !T {
     // Validate secret key size
