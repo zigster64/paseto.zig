@@ -26,7 +26,9 @@ pub fn encode(
 
     // Convert payload to JSON
     var json_buffer = ArrayList(u8).init(arena);
-    try json.stringify(payload, .{}, json_buffer.writer());
+    try json_buffer.writer().print("{f}", .{json.fmt(payload, .{})});
+
+    // try json.stringify(payload, .{}, json_buffer.writer());
     const json_payload = json_buffer.items;
 
     std.debug.print("encoded json payload {s}\n", .{json_payload});
