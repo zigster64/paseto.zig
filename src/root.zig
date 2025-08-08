@@ -29,6 +29,8 @@ pub fn encode(
     try json.stringify(payload, .{}, json_buffer.writer());
     const json_payload = json_buffer.items;
 
+    std.debug.print("encoded json payload {s}\n", .{json_payload});
+
     // Generate random 32-byte nonce for ChaCha20-Poly1305
     var nonce: [32]u8 = undefined;
     crypto.random.bytes(&nonce);
@@ -49,7 +51,7 @@ pub fn encode(
         json_payload,
         &nonce,
         nonce[0..crypto.aead.chacha_poly.ChaCha20Poly1305.nonce_length].*,
-        secret_key.*,
+        secret_key[0..32].*,
     );
 
     // Combine nonce + ciphertext for base64 encoding
@@ -137,11 +139,11 @@ pub fn decode(
         auth_tag.*,
         nonce, // Use nonce as additional authenticated data
         nonce[0..crypto.aead.chacha_poly.ChaCha20Poly1305.nonce_length].*,
-        secret_key.*,
+        secret_key[0..32].*,
     ) catch {
         return error.DecryptionFailed;
     };
-    // std.debug.print("decoded plaintext: {s}\n", .{plaintext});
+    std.debug.print("decoded plaintext: {s}\n", .{plaintext});
 
     // Parse JSON into the specified type
     // Using parseFromSliceLeaky since we want the strings to be allocated and owned
