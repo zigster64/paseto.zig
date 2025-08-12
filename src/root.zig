@@ -29,7 +29,7 @@ pub fn encode(
     try json.stringify(payload, .{}, json_buffer.writer());
     const json_payload = json_buffer.items;
 
-    std.debug.print("encoded json payload {s}\n", .{json_payload});
+    // std.debug.print("encoded json payload {s}\n", .{json_payload});
 
     // Generate random 32-byte nonce for ChaCha20-Poly1305
     var nonce: [32]u8 = undefined;
@@ -143,7 +143,7 @@ pub fn decode(
     ) catch {
         return error.DecryptionFailed;
     };
-    std.debug.print("decoded plaintext: {s}\n", .{plaintext});
+    // std.debug.print("decoded plaintext: {s}\n", .{plaintext});
 
     // Parse JSON into the specified type
     // Using parseFromSliceLeaky since we want the strings to be allocated and owned
