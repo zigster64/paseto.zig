@@ -77,6 +77,9 @@ pub fn encode(
     return token;
 }
 
+/// Decodes a PASETO v4.local token as JSON, and then parses the
+/// JSON payload into the given comptime struct.
+/// Returns an instance of that type
 pub fn decode(
     arena: Allocator,
     token: []const u8,
