@@ -147,7 +147,7 @@ pub fn decode(
     ) catch {
         return error.DecryptionFailed;
     };
-    std.debug.print("decoded plaintext: {s}\n", .{plaintext});
+    // std.debug.print("decoded plaintext: {s}\n", .{plaintext});
 
     // Parse JSON into the specified type
     // Using parseFromSliceLeaky since we want the strings to be allocated and owned
