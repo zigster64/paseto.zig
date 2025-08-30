@@ -25,12 +25,11 @@ pub fn encode(
     }
 
     // Convert payload to JSON
-    var json_buffer = ArrayList(u8).init(arena);
-    try json_buffer.writer().print("{f}", .{json.fmt(payload, .{})});
-
-    // try json.stringify(payload, .{}, json_buffer.writer());
-    const json_payload = json_buffer.items;
-
+    const json_payload = try std.fmt.allocPrint(
+        arena,
+        "{f}", // The format specifier for a formatter is now just "{}"
+        .{std.json.fmt(payload, .{})},
+    );
     std.debug.print("encoded json payload {s}\n", .{json_payload});
 
     // Generate random 32-byte nonce for ChaCha20-Poly1305
