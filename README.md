@@ -11,6 +11,13 @@ Tested and works with http.zig 0.15.1
 
 # Install
 
+1) Add paseto.zig as a dependency in your `build.zig.zon`:
+
+```bash
+zig fetch --save "git+https://github.com/zigster64/paseto.zig#master"
+```
+
+2) In your `build.zig`, add the `paseto` module as an import on your executable target
 
 # Test
 
