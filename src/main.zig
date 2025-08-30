@@ -8,9 +8,7 @@ const User = struct {
     exp: i64 = 0,
     iat: i64 = 0,
 
-    pub fn format(self: User, comptime fmt: []const u8, options: std.fmt.FormatOptions, writer: anytype) !void {
-        _ = fmt;
-        _ = options;
+    pub fn format(self: User, writer: anytype) !void {
         try writer.print(
             \\  email: {s}
             \\  session: {s}
@@ -50,5 +48,5 @@ pub fn main() !void {
     // decode us the token
     const user: User = try paseto.decode(allocator, token, secret, User);
 
-    std.debug.print("Decoded User: {s}\n", .{user});
+    std.debug.print("Decoded User: {f}\n", .{user});
 }

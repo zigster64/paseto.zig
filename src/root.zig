@@ -25,11 +25,12 @@ pub fn encode(
     }
 
     // Convert payload to JSON
-    var json_buffer = ArrayList(u8).init(arena);
-    try json.stringify(payload, .{}, json_buffer.writer());
-    const json_payload = json_buffer.items;
-
-    // std.debug.print("encoded json payload {s}\n", .{json_payload});
+    const json_payload = try std.fmt.allocPrint(
+        arena,
+        "{f}", // The format specifier for a formatter is now just "{}"
+        .{std.json.fmt(payload, .{})},
+    );
+    std.debug.print("encoded json payload {s}\n", .{json_payload});
 
     // Generate random 32-byte nonce for ChaCha20-Poly1305
     var nonce: [32]u8 = undefined;
@@ -76,6 +77,9 @@ pub fn encode(
     return token;
 }
 
+/// Decodes a PASETO v4.local token as JSON, and then parses the
+/// JSON payload into the given comptime struct.
+/// Returns an instance of that type
 pub fn decode(
     arena: Allocator,
     token: []const u8,
