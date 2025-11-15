@@ -30,7 +30,7 @@ pub fn encode(
         "{f}", // The format specifier for a formatter is now just "{}"
         .{std.json.fmt(payload, .{})},
     );
-    std.debug.print("encoded json payload {s}\n", .{json_payload});
+    // std.debug.print("encoded json payload {s}\n", .{json_payload});
 
     // Generate random 32-byte nonce for ChaCha20-Poly1305
     var nonce: [32]u8 = undefined;
